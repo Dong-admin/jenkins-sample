@@ -13,24 +13,25 @@ spec:
       labels:
         app: jenkins-demo
     spec:
+      imagePullSecrets:
+      - name: registry-pull-secret
       containers:
-      - image: berrychen/jenkins-demo:<BUILD_TAG>
+      - image: 192.168.5.203/jenkins-demo/jenkins-demo:<BUILD_TAG>
         imagePullPolicy: IfNotPresent
-        name: jenkins-demo
-        env:
-        - name: branch
-          value: <BRANCH_NAME>
+        name: app
+        ports:
+        - containerPort: 8081
+        
 ---
 apiVersion: v1
 kind: Service
 metadata:
-   name: demo
-   namespace: qatest
+  name: jenkins-demo
+  namespace: qatest
 spec:
-   selector:
-     app: jenkins-demo
-   type: NodePort
-   ports:
-   - port: 18888
-     targetPort: 18888
-     nodePort: 31891
+  selector:
+    app: jenkins-demo
+  ports:
+  - port: 8081
+    targetPort: 8081
+  type: NodePort
